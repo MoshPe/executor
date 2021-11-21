@@ -1,0 +1,6 @@
+services:
+  hello:
+    image: hello-world:latest
+    Tty: true
+    OpenStdin: true
+
