@@ -15,76 +15,36 @@
 package cmd
 
 import (
-	"errors"
-	"executor/pkg"
 	"fmt"
+
 	"github.com/spf13/cobra"
-	"log"
-	"path/filepath"
 )
 
-// parserCmd represents the parser command
-var parserCmd = &cobra.Command{
-	Use:   "parser",
-	Short: "A brief description of your command",
+// pruneCmd represents the prune command
+var pruneCmd = &cobra.Command{
+	Use:   "prune",
+	Short: "Remove unused images",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1{
-			return errors.New("accepts 1 arg(s)")
-		}
-		return nil
-	},
-	Example: `executor ./resources/{file name}.yml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			fileName string
-			filePath string
-		)
-		filePath = args[0]
-		fileExists, err := ConfigFile.FileExists(filePath)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if fileExists {
-			fileName = filepath.Base(filePath)
-			if err != nil {
-				fmt.Println(err.Error())
-
-			}
-		} else {
-			fmt.Printf("File %v doest not Exists", filePath)
-			return
-		}
-		fileName = ConfigFile.FilenameWithoutExtension(fileName)
-		fmt.Println(fileName)
-		fmt.Println(filePath)
-		Project,err = pkg.ParserYaml(fileName)
-		if err != nil {
-			log.Fatalln("Couldn't parse the file")
-		}
-
-		for _, service := range Project.Services {
-			log.Println(service.DependsOn)
-		}
+		fmt.Println("prune called")
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(parserCmd)
+	ImageCmd.AddCommand(pruneCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// parserCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// pruneCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// parserCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// pruneCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

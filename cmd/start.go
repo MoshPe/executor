@@ -33,20 +33,34 @@ import (
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "A brief description of your command",
+	Use:        "start",
+	Aliases:    nil,
+	SuggestFor: nil,
+	Short:      "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Example:           "",
+	ValidArgs:         nil,
+	ValidArgsFunction: nil,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1{
+		if len(args) < 1 {
 			return errors.New("accepts 1 arg(s)")
 		}
 		return nil
 	},
+	ArgAliases:             nil,
+	BashCompletionFunction: "",
+	Deprecated:             "",
+	Annotations:            nil,
+	Version:                "",
+	PersistentPreRun:       nil,
+	PersistentPreRunE:      nil,
+	PreRun:                 nil,
+	PreRunE:                nil,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			fileName string
@@ -69,14 +83,30 @@ to quickly create a Cobra application.`,
 		fileName = ConfigFile.FilenameWithoutExtension(fileName)
 		fmt.Println(fileName)
 		fmt.Println(filePath)
-		Project,err = pkg.ParserYaml(fileName)
+		Project, err = pkg.ParserYaml(fileName)
 		if err != nil {
-			log.Fatalln("Couldn't parse the file")
+			log.Fatalln(err)
 		}
-		if err = startServices(); err != nil{
+		if err = startServices(); err != nil {
 			panic(err)
 		}
 	},
+	RunE:                       nil,
+	PostRun:                    nil,
+	PostRunE:                   nil,
+	PersistentPostRun:          nil,
+	PersistentPostRunE:         nil,
+	FParseErrWhitelist:         cobra.FParseErrWhitelist{},
+	CompletionOptions:          cobra.CompletionOptions{},
+	TraverseChildren:           false,
+	Hidden:                     false,
+	SilenceErrors:              false,
+	SilenceUsage:               false,
+	DisableFlagParsing:         false,
+	DisableAutoGenTag:          false,
+	DisableFlagsInUseLine:      false,
+	DisableSuggestions:         false,
+	SuggestionsMinimumDistance: 0,
 }
 
 func init() {

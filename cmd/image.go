@@ -16,75 +16,72 @@ package cmd
 
 import (
 	"errors"
-	"executor/pkg"
 	"fmt"
+
 	"github.com/spf13/cobra"
-	"log"
-	"path/filepath"
 )
 
-// parserCmd represents the parser command
-var parserCmd = &cobra.Command{
-	Use:   "parser",
-	Short: "A brief description of your command",
+// ImageCmd represents the image command
+var ImageCmd = &cobra.Command{
+	Use:        "image",
+	Aliases:    nil,
+	SuggestFor: nil,
+	Short:      "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-
+	Example:                "",
+	ValidArgs:              nil,
+	ValidArgsFunction:      nil,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1{
+		if len(args) < 1 {
 			return errors.New("accepts 1 arg(s)")
 		}
 		return nil
 	},
-	Example: `executor ./resources/{file name}.yml`,
+	ArgAliases:             nil,
+	BashCompletionFunction: "",
+	Deprecated:             "",
+	Annotations:            nil,
+	Version:                "",
+	PersistentPreRun:       nil,
+	PersistentPreRunE:      nil,
+	PreRun:                 nil,
+	PreRunE:                nil,
 	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			fileName string
-			filePath string
-		)
-		filePath = args[0]
-		fileExists, err := ConfigFile.FileExists(filePath)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if fileExists {
-			fileName = filepath.Base(filePath)
-			if err != nil {
-				fmt.Println(err.Error())
-
-			}
-		} else {
-			fmt.Printf("File %v doest not Exists", filePath)
-			return
-		}
-		fileName = ConfigFile.FilenameWithoutExtension(fileName)
-		fmt.Println(fileName)
-		fmt.Println(filePath)
-		Project,err = pkg.ParserYaml(fileName)
-		if err != nil {
-			log.Fatalln("Couldn't parse the file")
-		}
-
-		for _, service := range Project.Services {
-			log.Println(service.DependsOn)
-		}
+		fmt.Println("image called")
 	},
+	RunE:                       nil,
+	PostRun:                    nil,
+	PostRunE:                   nil,
+	PersistentPostRun:          nil,
+	PersistentPostRunE:         nil,
+	FParseErrWhitelist:         cobra.FParseErrWhitelist{},
+	CompletionOptions:          cobra.CompletionOptions{},
+	TraverseChildren:           false,
+	Hidden:                     false,
+	SilenceErrors:              false,
+	SilenceUsage:               false,
+	DisableFlagParsing:         false,
+	DisableAutoGenTag:          false,
+	DisableFlagsInUseLine:      false,
+	DisableSuggestions:         false,
+	SuggestionsMinimumDistance: 0,
 }
 
 func init() {
-	RootCmd.AddCommand(parserCmd)
+	RootCmd.AddCommand(ImageCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// parserCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// imageCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// parserCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// imageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
