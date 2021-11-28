@@ -18,6 +18,9 @@ github.com/compose-spec/godotenv
 github.com/containerd/containerd/errdefs
 github.com/containerd/containerd/log
 github.com/containerd/containerd/platforms
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+github.com/davecgh/go-spew/spew
 # github.com/denisenkom/go-mssqldb v0.11.0
 ## explicit; go 1.11
 github.com/denisenkom/go-mssqldb

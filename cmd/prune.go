@@ -15,24 +15,73 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/client"
+	"gopkg.in/yaml.v2"
 
 	"github.com/spf13/cobra"
 )
 
 // pruneCmd represents the prune command
 var pruneCmd = &cobra.Command{
-	Use:   "prune",
-	Short: "Remove unused images",
+	Use:        "prune",
+	Aliases:    nil,
+	SuggestFor: nil,
+	Short:      "Remove unused images",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Example:                "",
+	ValidArgs:              nil,
+	ValidArgsFunction:      nil,
+	Args:                   nil,
+	ArgAliases:             nil,
+	BashCompletionFunction: "",
+	Deprecated:             "",
+	Annotations:            nil,
+	Version:                "",
+	PersistentPreRun:       nil,
+	PersistentPreRunE:      nil,
+	PreRun:                 nil,
+	PreRunE:                nil,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("prune called")
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		images, err := cli.ImagesPrune(ctx, filters.Args{})
+		if err != nil {
+			panic(err)
+		}
+
+		for _, image := range images.ImagesDeleted {
+			str,_ := yaml.Marshal(image)
+			fmt.Println(string(str))
+		}
 	},
+	RunE:                       nil,
+	PostRun:                    nil,
+	PostRunE:                   nil,
+	PersistentPostRun:          nil,
+	PersistentPostRunE:         nil,
+	FParseErrWhitelist:         cobra.FParseErrWhitelist{},
+	CompletionOptions:          cobra.CompletionOptions{},
+	TraverseChildren:           false,
+	Hidden:                     false,
+	SilenceErrors:              false,
+	SilenceUsage:               false,
+	DisableFlagParsing:         false,
+	DisableAutoGenTag:          false,
+	DisableFlagsInUseLine:      false,
+	DisableSuggestions:         false,
+	SuggestionsMinimumDistance: 0,
 }
 
 func init() {

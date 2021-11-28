@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/compose-spec/compose-go v1.0.6
+	github.com/davecgh/go-spew v1.1.1
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/docker/docker v20.10.11+incompatible
 	github.com/mitchellh/go-homedir v1.1.0

@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 
 	"github.com/spf13/cobra"
 )
@@ -31,7 +35,26 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rm called")
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		images, err := cli.ImageRemove(ctx, args[0], types.ImageRemoveOptions{})
+		if err != nil {
+			panic(err)
+		}
+
+		for _, image := range images {
+			fmt.Println(image.Deleted)
+		}
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("required an image ID")
+		}
+		return nil
 	},
 }
 
