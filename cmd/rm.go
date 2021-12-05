@@ -41,7 +41,9 @@ to quickly create a Cobra application.`,
 			panic(err)
 		}
 
-		images, err := cli.ImageRemove(ctx, args[0], types.ImageRemoveOptions{})
+		images, err := cli.ImageRemove(ctx, args[0], types.ImageRemoveOptions{
+			Force: cmd.Flag("force").Changed,
+		})
 		if err != nil {
 			panic(err)
 		}
@@ -59,8 +61,8 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+	rmCmd.Flags().BoolP("force","f",true,"Force rm an image")
 	ImageCmd.AddCommand(rmCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

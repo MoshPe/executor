@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -41,8 +43,18 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				panic(err)
 			}
-
-			out, err := cli.ImagePull(ctx, args[0], types.ImagePullOptions{})
+			authConfig := types.AuthConfig{
+				Username: "moshpe",
+				Password: "MoshPe2969999",
+			}
+			encodedJSON, err := json.Marshal(authConfig)
+			if err != nil {
+				panic(err)
+			}
+			authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+			out, err := cli.ImagePull(ctx, args[0], types.ImagePullOptions{
+				RegistryAuth: authStr,
+			})
 			if err != nil {
 				panic(err)
 			}
