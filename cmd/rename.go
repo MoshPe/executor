@@ -20,9 +20,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rmCmd represents the rm command
-var rmCmd = &cobra.Command{
-	Use:   "rm",
+// renameCmd represents the rename command
+var renameCmd = &cobra.Command{
+	Use:   "rename",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -31,20 +31,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rm called")
+		fmt.Println("rename called")
 	},
 }
 
 func init() {
-	container.AddCommand(rmCmd)
+	container.AddCommand(renameCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// rmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// renameCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// rmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// renameCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

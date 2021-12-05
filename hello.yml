@@ -1,4 +1,9 @@
 services:
   hello:
     image: hello-world:latest
+  garage:
+    image: moshpe/garage
+  postgres:
+    image: postgres
+    container_name: posti
 

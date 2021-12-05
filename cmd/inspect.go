@@ -15,17 +15,15 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
-	"github.com/docker/docker/client"
+
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
 
 // inspectCmd represents the inspect command
 var inspectCmd = &cobra.Command{
 	Use:   "inspect",
-	Short: "Display detailed information on one or more images",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -33,23 +31,12 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.Background()
-		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-		if err != nil {
-			panic(err)
-		}
-
-		images, _ ,err := cli.ImageInspectWithRaw(ctx,args[0])
-		if err != nil {
-			panic(err)
-		}
-		str,_ := yaml.Marshal(images)
-		fmt.Println(string(str))
+		fmt.Println("inspect called")
 	},
 }
 
 func init() {
-	ImageCmd.AddCommand(inspectCmd)
+	container.AddCommand(inspectCmd)
 
 	// Here you will define your flags and configuration settings.
 

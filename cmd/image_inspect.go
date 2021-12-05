@@ -15,15 +15,17 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
-// rmCmd represents the rm command
-var rmCmd = &cobra.Command{
-	Use:   "rm",
-	Short: "A brief description of your command",
+// inspectCmd represents the inspect command
+var inspectCmd = &cobra.Command{
+	Use:   "inspect",
+	Short: "Display detailed information on one or more images",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -31,20 +33,31 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rm called")
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		images, _ ,err := cli.ImageInspectWithRaw(ctx,args[0])
+		if err != nil {
+			panic(err)
+		}
+		str,_ := yaml.Marshal(images)
+		fmt.Println(string(str))
 	},
 }
 
 func init() {
-	container.AddCommand(rmCmd)
+	ImageCmd.AddCommand(inspectCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// rmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// inspectCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// rmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// inspectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

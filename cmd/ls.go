@@ -15,19 +15,15 @@
 package cmd
 
 import (
-	"code.cloudfoundry.org/bytefmt"
-	"context"
 	"fmt"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
+
 	"github.com/spf13/cobra"
-	"time"
 )
 
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "List images",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -35,34 +31,12 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.Background()
-		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-		if err != nil {
-			panic(err)
-		}
-
-		images, err := cli.ImageList(ctx, types.ImageListOptions{})
-		if err != nil {
-			panic(err)
-		}
-
-		if len(images) == 0 {
-			fmt.Println("There are no images available")
-		}
-
-		for _, image := range images {
-			fmt.Printf("Image ID: %s\nImage Size: %s\nImage Created: %s" +
-				"\nImage Tags: %s\n----\n",image.ID,bytefmt.ByteSize(uint64(image.Size)), time.Unix(image.Created,0).String(), image.RepoTags[0])
-		}
-
+		fmt.Println("ls called")
 	},
 }
 
 func init() {
-	ImageCmd.AddCommand(lsCmd)
-	var images = *lsCmd
-	images.Use = "images"
-	RootCmd.AddCommand(&images)
+	container.AddCommand(lsCmd)
 
 	// Here you will define your flags and configuration settings.
 

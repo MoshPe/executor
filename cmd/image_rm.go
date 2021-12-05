@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +27,7 @@ import (
 // rmCmd represents the rm command
 var rmCmd = &cobra.Command{
 	Use:   "rm",
-	Short: "A brief description of your command",
+	Short: "Remove one or more images",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -31,13 +35,34 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rm called")
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		images, err := cli.ImageRemove(ctx, args[0], types.ImageRemoveOptions{
+			Force: cmd.Flag("force").Changed,
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		for _, image := range images {
+			fmt.Println(image.Deleted)
+		}
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("required an image ID")
+		}
+		return nil
 	},
 }
 
 func init() {
-	container.AddCommand(rmCmd)
-
+	rmCmd.Flags().BoolP("force","f",true,"Force rm an image")
+	ImageCmd.AddCommand(rmCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
