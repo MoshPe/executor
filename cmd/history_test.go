@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/docker/docker/api/types"
 	"io"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/docker/docker/api/types/image"
@@ -16,6 +14,7 @@ import (
 	"github.com/docker/docker/errdefs"
 )
 
+//Testing image history with a null image
 func TestImageHistoryError(t *testing.T) {
 	c,createErr := client.NewClientWithOpts(client.WithHTTPClient(newMockClient(errorMock(http.StatusInternalServerError, "Server error"))))
 	if createErr != nil {
@@ -28,11 +27,7 @@ func TestImageHistoryError(t *testing.T) {
 }
 
 func TestImageHistory(t *testing.T) {
-	expectedURL := "/images/image_id/history"
 	c,createErr := client.NewClientWithOpts(client.WithHTTPClient(newMockClient(func(r *http.Request) (*http.Response, error) {
-		if !strings.HasPrefix(r.URL.Path, expectedURL) {
-			return nil, fmt.Errorf("expected URL '%s', got '%s'", expectedURL, r.URL)
-		}
 		b, err := json.Marshal([]image.HistoryResponseItem{
 			{
 				ID:   "image_id1",
