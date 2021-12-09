@@ -21,7 +21,7 @@ import (
 )
 
 // startCmd represents the start command
-var startCmd = &cobra.Command{
+var containerStartCmd = &cobra.Command{
 	Use:   "start",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -36,7 +36,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	container.AddCommand(startCmd)
+	ContainerCmd.AddCommand(containerStartCmd)
 
 	// Here you will define your flags and configuration settings.
 

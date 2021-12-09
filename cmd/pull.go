@@ -28,7 +28,7 @@ import (
 )
 
 // pullCmd represents the pull command
-var pullCmd = &cobra.Command{
+var PullCmd = &cobra.Command{
 	Use:   "pull",
 	Short: "Pull an image or a repository from a registry",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -38,30 +38,30 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-			ctx := context.Background()
-			cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-			if err != nil {
-				panic(err)
-			}
-			authConfig := types.AuthConfig{
-				Username: "moshpe",
-				Password: "MoshPe2969999",
-			}
-			encodedJSON, err := json.Marshal(authConfig)
-			if err != nil {
-				panic(err)
-			}
-			authStr := base64.URLEncoding.EncodeToString(encodedJSON)
-			out, err := cli.ImagePull(ctx, args[0], types.ImagePullOptions{
-				RegistryAuth: authStr,
-			})
-			if err != nil {
-				panic(err)
-			}
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+		authConfig := types.AuthConfig{
+			Username: "moshpe",
+			Password: "MoshPe2969999",
+		}
+		encodedJSON, err := json.Marshal(authConfig)
+		if err != nil {
+			panic(err)
+		}
+		authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+		out, err := cli.ImagePull(ctx, args[0], types.ImagePullOptions{
+			RegistryAuth: authStr,
+		})
+		if err != nil {
+			panic(err)
+		}
 
-			defer out.Close()
+		defer out.Close()
 
-			io.Copy(os.Stdout, out)
+		io.Copy(os.Stdout, out)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
@@ -72,8 +72,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	ImageCmd.AddCommand(pullCmd)
-
+	ImageCmd.AddCommand(PullCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

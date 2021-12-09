@@ -53,7 +53,7 @@ to quickly create a Cobra application.`,
 		}
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
+		if len(args) != 1 {
 			return errors.New("required an image ID")
 		}
 		return nil
@@ -61,7 +61,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rmCmd.Flags().BoolP("force","f",true,"Force rm an image")
+	rmCmd.Flags().BoolP("force", "f", true, "Force rm an image")
 	ImageCmd.AddCommand(rmCmd)
 	// Here you will define your flags and configuration settings.
 

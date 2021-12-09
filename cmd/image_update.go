@@ -15,23 +15,110 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
-
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 )
 
 // updateCmd represents the update command
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update all running containers with the same image but newer version",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+const updateSuccess = "Updated image successfully"
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+var containerID []string
+var imageID []string
+
+type containersToUpdate struct {
+	containers      []types.Container
+	containerConfig []types.ContainerJSON
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update IMAGE_FROM IMAGE_TO",
+	Short: "Update all running containers with the same image but newer version - USE WITH CARE!!!",
+	Long: `The application stops and rms all containers with the exact image, pull an image
+and starting a new containers again - USE WITH CARE!!!.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
+		var con containersToUpdate
+		containerID = make([]string, 1)
+		imageIdFrom := args[0]
+		imageIdTo := args[1]
+		imageID = append(imageID, imageIdTo)
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+		//can add filtering options
+		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+		if err != nil {
+			panic(err)
+		}
+		//running the pull image command
+		PullCmd.Run(cmd, imageID)
+
+		if len(containers) == 0 {
+			fmt.Println("No containers available - " + updateSuccess + imageIdTo)
+		}
+
+		//search for the containers with the exact image to update
+		for _, container := range containers {
+			if container.Image == imageIdFrom {
+				con.containers = append(con.containers, container)
+			}
+		}
+
+		con.containerConfig = make([]types.ContainerJSON, len(con.containers))
+		//saving the container configuration
+		for i, container := range con.containers {
+			containerSpec, err := cli.ContainerInspect(ctx, container.ID)
+			if err != nil {
+				panic(err)
+			}
+			con.containerConfig[i] = containerSpec
+		}
+
+		//stopping the containers
+		for _, container := range con.containers {
+			containerID[0] = container.ID
+			StopCmd.Run(cmd, containerID)
+		}
+
+		//rming the containers
+		for _, container := range con.containers {
+			err = cli.ContainerRemove(ctx, container.ID, types.ContainerRemoveOptions{})
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		//restarting the containers with the new image
+		for i := range con.containers {
+			containerConfig := con.containerConfig[i].HostConfig
+			net := network.NetworkingConfig{EndpointsConfig: con.containerConfig[i].NetworkSettings.Networks}
+			//setting the image
+			con.containerConfig[i].Config.Image = imageIdTo
+			response, err := cli.ContainerCreate(ctx, con.containerConfig[i].Config, containerConfig, &net,
+				nil, con.containerConfig[i].Name)
+
+			if err != nil {
+				panic(err)
+			}
+
+			if err := cli.ContainerStart(ctx, response.ID, types.ContainerStartOptions{}); err != nil {
+				panic(err)
+			}
+
+			fmt.Println(response.ID)
+		}
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 2 {
+			return errors.New("required an image name")
+		}
+		return nil
 	},
 }
 

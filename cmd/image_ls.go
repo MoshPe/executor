@@ -50,9 +50,9 @@ to quickly create a Cobra application.`,
 			fmt.Println("There are no images available")
 		}
 
+		fmt.Printf("Image ID\tSize\t\tCreated\t\t\tTags\n")
 		for _, image := range images {
-			fmt.Printf("Image ID: %s\nImage Size: %s\nImage Created: %s" +
-				"\nImage Tags: %s\n----\n",image.ID,bytefmt.ByteSize(uint64(image.Size)), time.Unix(image.Created,0).Format(time.RFC850), image.RepoTags[0])
+			fmt.Printf("%.12s\t%s\t\t%s\t\t%s\t\n", image.ID[7:], bytefmt.ByteSize(uint64(image.Size)), time.Unix(image.Created, 0).Format(time.Stamp), image.RepoTags[0])
 
 		}
 	},

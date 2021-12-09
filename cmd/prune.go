@@ -21,7 +21,7 @@ import (
 )
 
 // pruneCmd represents the prune command
-var pruneCmd = &cobra.Command{
+var containerPruneCmd = &cobra.Command{
 	Use:   "prune",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -36,7 +36,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	container.AddCommand(pruneCmd)
+	ContainerCmd.AddCommand(containerPruneCmd)
 
 	// Here you will define your flags and configuration settings.
 

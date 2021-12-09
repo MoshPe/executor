@@ -15,13 +15,16 @@
 package cmd
 
 import (
-	"fmt"
-
+	"context"
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
+	"time"
 )
 
+var seconds int
+
 // stopCmd represents the stop command
-var stopCmd = &cobra.Command{
+var StopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -31,13 +34,23 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("stop called")
+		containerId := args[0]
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+		t := time.Duration(seconds)
+		err = cli.ContainerStop(ctx, containerId, &t)
+		if err != nil {
+			panic(err)
+		}
 	},
 }
 
 func init() {
-	container.AddCommand(stopCmd)
-
+	StopCmd.PersistentFlags().IntVarP(&seconds, "time", "t", 10, "Seconds to wait for stop before killing it (default 10)")
+	ContainerCmd.AddCommand(StopCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -33,43 +31,13 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Example:                "",
-	ValidArgs:              nil,
-	ValidArgsFunction:      nil,
+	Example: "",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("accepts 1 arg(s)")
 		}
 		return nil
 	},
-	ArgAliases:             nil,
-	BashCompletionFunction: "",
-	Deprecated:             "",
-	Annotations:            nil,
-	Version:                "",
-	PersistentPreRun:       nil,
-	PersistentPreRunE:      nil,
-	PreRun:                 nil,
-	PreRunE:                nil,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("image called")
-	},
-	RunE:                       nil,
-	PostRun:                    nil,
-	PostRunE:                   nil,
-	PersistentPostRun:          nil,
-	PersistentPostRunE:         nil,
-	FParseErrWhitelist:         cobra.FParseErrWhitelist{},
-	CompletionOptions:          cobra.CompletionOptions{},
-	TraverseChildren:           false,
-	Hidden:                     false,
-	SilenceErrors:              false,
-	SilenceUsage:               false,
-	DisableFlagParsing:         false,
-	DisableAutoGenTag:          false,
-	DisableFlagsInUseLine:      false,
-	DisableSuggestions:         false,
-	SuggestionsMinimumDistance: 0,
 }
 
 func init() {

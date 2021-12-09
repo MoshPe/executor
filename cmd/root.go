@@ -27,7 +27,7 @@ var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "executor",
+	Use: "executor",
 	Short: "A service manager for remote access to any sort of system that deploy applications" +
 		"using containerD",
 	Long: "A service manager for remote access to any sort of system that deploy applications" +
@@ -47,9 +47,8 @@ func Execute() {
 	}
 }
 
-func init() { 
+func init() {
 	cobra.OnInitialize(initConfig)
-
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

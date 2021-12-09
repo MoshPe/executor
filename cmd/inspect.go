@@ -15,13 +15,17 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"github.com/docker/docker/client"
+	"gopkg.in/yaml.v2"
 
 	"github.com/spf13/cobra"
 )
 
 // inspectCmd represents the inspect command
-var inspectCmd = &cobra.Command{
+var containerInspectCmd = &cobra.Command{
 	Use:   "inspect",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -31,12 +35,30 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("inspect called")
+		containerID := args[0]
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		containerSpec, err := cli.ContainerInspect(ctx, containerID)
+		if err != nil {
+			panic(err)
+		}
+		str, _ := yaml.Marshal(containerSpec)
+		fmt.Println(string(str))
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("required a container ID / name")
+		}
+		return nil
 	},
 }
 
 func init() {
-	container.AddCommand(inspectCmd)
+	ContainerCmd.AddCommand(containerInspectCmd)
 
 	// Here you will define your flags and configuration settings.
 

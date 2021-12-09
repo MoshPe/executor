@@ -15,9 +15,12 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
-
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 // diffCmd represents the diff command
@@ -31,12 +34,32 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("diff called")
+		//No need to check for existence, daemon checks and return an error
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+		containerID := args[0]
+		diffCtx, err := cli.ContainerDiff(ctx, containerID)
+		if err != nil {
+			panic(err)
+		}
+		for _, containerDiff := range diffCtx {
+			str, _ := yaml.Marshal(containerDiff)
+			fmt.Println(string(str))
+		}
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("A container name / id must be specified")
+		}
+		return nil
 	},
 }
 
 func init() {
-	container.AddCommand(diffCmd)
+	ContainerCmd.AddCommand(diffCmd)
 
 	// Here you will define your flags and configuration settings.
 

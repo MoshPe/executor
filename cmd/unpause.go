@@ -36,7 +36,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	container.AddCommand(unpauseCmd)
+	ContainerCmd.AddCommand(unpauseCmd)
 
 	// Here you will define your flags and configuration settings.
 

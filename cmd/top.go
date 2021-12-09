@@ -15,7 +15,10 @@
 package cmd
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"github.com/docker/docker/client"
 
 	"github.com/spf13/cobra"
 )
@@ -31,12 +34,43 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("top called")
+		containerId := args[0]
+		ctx := context.Background()
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
+
+		topBody, err := cli.ContainerTop(ctx, containerId, nil)
+		if err != nil {
+			panic(err)
+		}
+		for i, title := range topBody.Titles {
+			if i == len(topBody.Titles)-2 {
+				fmt.Printf("%s\t\t\t", title)
+			} else {
+				fmt.Printf("%s\t\t", title)
+			}
+
+		}
+		fmt.Println()
+		for _, process := range topBody.Processes {
+			for _, proc := range process {
+				fmt.Printf("%s\t\t", proc)
+			}
+			fmt.Println()
+		}
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("required a conatiner ID / name")
+		}
+		return nil
 	},
 }
 
 func init() {
-	container.AddCommand(topCmd)
+	ContainerCmd.AddCommand(topCmd)
 
 	// Here you will define your flags and configuration settings.
 
